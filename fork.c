@@ -31,7 +31,8 @@ int main() {
   printf("I am the parent and my pid is %d.\n",getpid());
   int f = fork();
   check_error();
-  int f1_sleep = waitpid(f,WEXITSTATUS,0);
+  int status = 0;
+  int f1_sleep = waitpid(f,&status,0);
 
   //Parent
   if (f) {
