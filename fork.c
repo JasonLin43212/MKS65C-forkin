@@ -46,7 +46,7 @@ int main() {
   //Child
   else {
     printf("I am a child and my pid is %d\n",getpid());
-    int random_sleep_2 = (random_num() % 3) + 5;
+    int random_sleep_2 = (random_num() % 16) + 5;
     sleep(random_sleep_2);
     printf("I am child %d and I am done sleeping.\n",getpid());
     return random_sleep_2;
