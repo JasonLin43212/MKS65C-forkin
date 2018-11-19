@@ -2,13 +2,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <time.h>
 
 void check_error() {
-  if (!errno) {
-    printf("Error #%d: %s",errno,strerror(errno));
+  if (errno) {
+    printf("Error #%d: %s\n",errno,strerror(errno));
     exit(1);
   }
 }
@@ -27,45 +29,28 @@ int random_num() {
 }
 
 int main() {
-
   printf("I am the parent and my pid is %d.\n",getpid());
-  int f = fork();
+  int f1 = fork();
+  int f2 = -1;
+  if (f1){
+    f2 = fork();
+  }
   check_error();
-  int status = 0;
-  int f1_sleep = waitpid(f,&status,0);
-
   //Parent
-  if (f) {
-    printf("Successful fork");
-    /*
-    int f2 = fork();
-    check_error();
-    waitpid(2,WEXITSTATUS,0);
-
-    
-    //Parent
-    if (f2) {
-      
-    }
-    //Child
-    else {
-      printf("I am a child and my pid is %d",getpid());
-      int random_sleep_2 = (random_num % 16) + 5;
-      sleep(random_sleep_2);
-      printf(
-      return random_sleep_2;
-    }
-    */
+  if (f1 && f2) {
+    printf("Successful fork\n");
+    int status = 0;
+    wait(&status);
+    printf("Child with pid %d has finished sleeping for %d seconds.\n",f1,WEXITSTATUS(status));
   }
   //Child
   else {
-    printf("I am a child and my pid is %d",getpid());
-    int random_sleep = (random_num % 16) + 5;
-    sleep(random_sleep);
+    printf("I am a child and my pid is %d\n",getpid());
+    int random_sleep_2 = (random_num() % 3) + 5;
+    sleep(random_sleep_2);
+    printf("I am child %d and I am done sleeping.\n",getpid());
     return random_sleep_2;
   }
-
-
-  
+  printf("Parent is done with its work.\n");
   return 0;
 }
